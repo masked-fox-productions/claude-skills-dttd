@@ -25,6 +25,26 @@ scope — skip items that are clearly irrelevant, but err on the side of checkin
 - [ ] Are prerequisites and assumptions stated?
 - [ ] Is the "why" explained, not just the "what"?
 
+## Audience
+
+- [ ] Does the README serve the **buyer** audience? (what it does, why it exists, is it for me?)
+- [ ] Does the README avoid burying the lede with architecture or developer details?
+- [ ] Are there **user** docs? (guides, tutorials — task-oriented, assumes adoption)
+- [ ] Do user docs stay task-oriented without drifting into system internals?
+- [ ] Are there **developer** docs? (architecture, data formats, API reference — system-oriented)
+- [ ] Do developer docs explain *why*, not just *what*?
+- [ ] Is each document clear about which audience it serves?
+- [ ] Are all three audiences served somewhere in the doc structure?
+
+## Hierarchy
+
+- [ ] Is there **system-level** documentation? (what the product is, its major parts)
+- [ ] Is there **subsystem-level** documentation? (each major component's role and interfaces)
+- [ ] Is there **component-level** documentation? (specific modules, formats, APIs)
+- [ ] Does each level link **down** to more detail?
+- [ ] Does each level link **up** to broader context?
+- [ ] Can a reader zoom from system overview to component detail without gaps?
+
 ## Consistency
 
 - [ ] Do different docs agree with each other about the same feature?

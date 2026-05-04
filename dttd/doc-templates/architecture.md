@@ -3,18 +3,24 @@
 Use this template when documenting system structure, module relationships,
 or data flow across components.
 
+**Audience:** Developers (people extending, debugging, or contributing to the system).
+**Level:** System or subsystem (link down to component docs, link up to README/overview).
+
 ---
 
 ## [System/Module Name] Architecture
 
 ### Overview
-One-paragraph summary of what this architectural boundary encompasses.
+One-paragraph summary: what this architectural boundary encompasses, why it exists
+as a distinct unit, and where it sits in the broader system.
 
 ### Components
 
 | Component         | Location              | Responsibility                    |
 |-------------------|-----------------------|-----------------------------------|
 | [Name]            | `path/to/module/`     | Brief role description            |
+
+For each component, link to its own documentation if it exists.
 
 ### Data Flow [VERIFIED/INFERRED]
 Describe how data moves between components. Use a numbered list for sequential

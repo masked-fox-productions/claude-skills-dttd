@@ -34,12 +34,87 @@ In audit mode:
 3. Survey all existing documentation: README, docs/, inline comments, docstrings.
 4. Survey the codebase structure to understand what *should* be documented.
 5. Produce an inventory: what exists, what's missing, what's contradicted, what's stale.
-6. If the repo has an existing doc structure that's coherent, ask before reorganizing.
+6. Assess audience coverage: which audiences are served, which are neglected.
+7. Assess hierarchical completeness: is there system-level, subsystem-level, and
+   component-level documentation? Where are the gaps?
+8. If the repo has an existing doc structure that's coherent, ask before reorganizing.
    If docs are scattered with no clear pattern, propose a structure (README + docs/ tree).
-7. Offer to execute the reorganization, or hand off specific sections as standard-mode follow-ups.
+9. Offer to execute the reorganization, or hand off specific sections as standard-mode follow-ups.
 
 Audit mode produces a **doc inventory and restructuring plan** rather than updated docs directly.
 It's the reconnaissance pass that informs targeted `/dttd` sessions.
+
+## Core Principles
+
+### Audience Awareness
+
+Documentation serves three distinct audiences. Every doc should know which
+audience it's talking to, and the overall doc structure should serve all three.
+
+| Audience       | What they need                                      | Where it lives            |
+|----------------|-----------------------------------------------------|---------------------------|
+| **Buyers**     | What is this? Why should I care? Is it for me?      | README.md                 |
+| **Users**      | How do I install, configure, and use this?           | docs/guides/, tutorials/  |
+| **Developers** | How does it work? How do I extend or contribute?     | docs/architecture, data-formats/, inline |
+
+**README.md is a buyer document.** It should answer three questions fast:
+1. What does this product do? (one sentence)
+2. Why does it exist / what problem does it solve? (one paragraph)
+3. Is it for me? (feature list, quick start, and a path to deeper docs)
+
+The README should not bury the lede with architecture details or developer
+concerns. Those belong in docs/ and are linked from the README.
+
+**Guides and tutorials are user documents.** They assume the reader has decided
+to use the product and wants to accomplish something specific. Task-oriented,
+not system-oriented.
+
+**Architecture, data formats, and API docs are developer documents.** They
+explain how the system works, why it's structured the way it is, and how to
+extend it. System-oriented, not task-oriented.
+
+When auditing or producing docs, check that each document serves its intended
+audience and doesn't drift into serving a different one. A README that reads
+like an architecture doc has lost its buyer audience. A tutorial that explains
+internal data structures has lost its user audience.
+
+### Hierarchical Structure
+
+Documentation should describe the system at three levels of granularity.
+Missing levels create gaps where readers can't zoom in or out.
+
+| Level          | Describes                                    | Example                          |
+|----------------|----------------------------------------------|----------------------------------|
+| **System**     | The product as a whole, its purpose and parts | README, architecture overview    |
+| **Subsystem**  | A major component and its responsibilities    | Editor docs, rendering pipeline  |
+| **Component**  | A specific module, format, or interface       | JSON format spec, API reference  |
+
+Each level should:
+- **Name what it covers** — clear scope boundary
+- **State its purpose** — why this piece exists
+- **Describe its interfaces** — what goes in, what comes out, what it connects to
+- **Link down** to more detailed docs (system → subsystem → component)
+- **Link up** to the broader context (component → subsystem → system)
+
+When producing documentation, check for missing levels. A repo with great
+component docs but no system overview forces readers to assemble the big
+picture themselves. A repo with only a high-level README and no component
+docs forces developers to read source code for every detail.
+
+### Honesty Over Completeness
+
+Documentation must reflect reality — or explicitly admit uncertainty.
+It must never hide problems to look clean.
+
+- **Current behavior** sections describe what the system *actually does*, verified
+  by reading code or running tests. Not what someone wished it did.
+- **Intended behavior** sections describe what the system *should* do, sourced
+  from high-trust references or explicit user statements. Clearly separated from
+  current behavior.
+- **Every claim is tagged** with its finding classification.
+- **Contradictions are stated explicitly**, not resolved silently.
+  Format: "Docs say X. Code does Y. Tests assert Z."
+- **Unknowns are admitted**, not papered over.
 
 ## Session Protocol (Standard Mode)
 
@@ -66,19 +141,17 @@ Work through the [doc-audit-checklist.md](doc-audit-checklist.md). For each item
 - Tag it: VERIFIED / INFERRED / CONTRADICTED / UNKNOWN.
 
 ### 4. Produce or Update Documentation
-Write documentation that follows these rules:
-
-- **Current behavior** sections describe what the system *actually does*, verified
-  by reading code or running tests. Not what someone wished it did.
-- **Intended behavior** sections describe what the system *should* do, sourced
-  from high-trust references or explicit user statements. Clearly separated from
-  current behavior.
-- **Every claim is tagged** with its finding classification.
-- **Contradictions are stated explicitly**, not resolved silently.
-  Format: "Docs say X. Code does Y. Tests assert Z."
-- **Unknowns are admitted**, not papered over.
+Write documentation that follows the core principles above: audience-aware,
+hierarchically structured, and honest.
 
 Pick the appropriate template from [doc-templates/](doc-templates/) if one fits.
+
+When deciding where new content belongs:
+- If it's about what the product is and why → README
+- If it's about how to use it → guides/ or tutorials/
+- If it's about how it works internally → architecture, data-formats/, or inline docs
+- If it's a new subsystem or component → create a doc at the right level and link it
+  from the parent level
 
 ### 5. Session Summary
 Produce the structured summary.
@@ -104,5 +177,7 @@ It must never hide problems to look clean.
 - When archiving old docs, move them to docs/archive/ — don't delete until their content
   has been absorbed into the new structure.
 - Keep docs scannable: headers, short paragraphs, code references with file paths.
+- README changes should be evaluated against the buyer audience — does this help
+  someone decide whether to adopt the product?
 
 $ARGUMENTS

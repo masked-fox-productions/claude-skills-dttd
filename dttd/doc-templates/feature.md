@@ -2,12 +2,21 @@
 
 Use this template when documenting a specific feature or capability.
 
+**Audience:** Choose based on the feature scope:
+- User-facing feature → write for **users** (how to use it, what it does for them)
+- Internal mechanism → write for **developers** (how it works, how to extend it)
+- Both → split into a user section (usage, examples) and a developer section (internals)
+
+**Level:** Subsystem or component. Link up to the parent architecture doc and
+down to related component docs or format specs.
+
 ---
 
 ## [Feature Name]
 
 ### Overview
 One-paragraph summary of what this feature does and why it exists.
+For user-facing features, lead with the user benefit, not the implementation.
 
 ### Current Behavior [VERIFIED/INFERRED]
 What the feature actually does today, based on code reading and test evidence.
@@ -36,4 +45,4 @@ Any cases where docs, tests, and code disagree. State all sides.
 Things that could not be determined from available evidence.
 
 ### Related
-- Links to related docs, modules, or tests.
+- Links to related docs (parent subsystem, sibling features, format specs).
