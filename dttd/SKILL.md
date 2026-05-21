@@ -1,8 +1,8 @@
 ---
 name: dttd
-description: "Don't Trust the Documents — audit, repair, or create documentation by treating existing docs as incomplete or incorrect. Triangulates from tests and code to produce honest, classified documentation."
+description: "Don't Trust the Documents — audit or deepen documentation by treating existing docs as incomplete or incorrect. Audit aggressively reviews and improves docs in place. Deepen starts from a targeted doc change and cascades to tests and code as needed."
 when_to_use: "When the user wants to audit docs, document a feature, reconcile docs with reality, onboard to a codebase, or design future behavior. Also when docs seem stale, incomplete, or contradictory."
-argument-hint: "[scope: module path, feature name, or 'full repo']"
+argument-hint: "[audit|deepen] [scope: module path, feature name, or 'full repo']"
 effort: high
 ---
 
@@ -19,30 +19,52 @@ existing docs.
 
 At the start of the session, ask the user which mode they want:
 
-### Standard Mode
-Focused documentation work on a specific scope. Proceeds to the trust interview.
-
 ### Audit Mode
-Full-repo documentation assessment and reorganization. Use when:
+Use when the current state of the docs is unknown or suspected outdated. Aggressively
+reviews and improves documentation across the targeted scope.
+
+When to use:
 - Onboarding to a codebase with unknown doc quality
 - Docs are scattered, disorganized, or of unknown accuracy
-- The user wants a comprehensive doc inventory before targeted work
+- The user wants a comprehensive doc overhaul
 
 In audit mode:
 1. Set tests and code trust to `unknown` (will be assessed during the audit).
-2. Set scope to full repo.
+2. Set scope to full repo unless the user specifies otherwise.
 3. Survey all existing documentation: README, docs/, inline comments, docstrings.
 4. Survey the codebase structure to understand what *should* be documented.
 5. Produce an inventory: what exists, what's missing, what's contradicted, what's stale.
 6. Assess audience coverage: which audiences are served, which are neglected.
 7. Assess hierarchical completeness: is there system-level, subsystem-level, and
    component-level documentation? Where are the gaps?
-8. If the repo has an existing doc structure that's coherent, ask before reorganizing.
-   If docs are scattered with no clear pattern, propose a structure (README + docs/ tree).
-9. Offer to execute the reorganization, or hand off specific sections as standard-mode follow-ups.
+8. If the repo has an existing doc structure that's coherent, ask before major restructuring.
+   If docs are scattered with no clear pattern, establish a structure (README + docs/ tree).
+9. Execute the improvements directly — reorganize, rewrite, and archive as needed.
+   For large scopes, complete the inventory first, then ask which sections to tackle first.
 
-Audit mode produces a **doc inventory and restructuring plan** rather than updated docs directly.
-It's the reconnaissance pass that informs targeted `/dttd` sessions.
+Audit mode **makes the changes**, not just a plan. Changes stay within documentation only.
+Note code bugs and test gaps for follow-up rather than fixing them in this session.
+
+### Deepen Mode
+Use when the user already knows the content and wants to improve something specific.
+Starts with a targeted documentation change and cascades to tests and code as needed.
+
+When to use:
+- Adding or improving documentation for a specific feature or module
+- Improving claims that need test coverage to be credible
+- Doc investigation reveals behavior that should be fixed in code
+
+In deepen mode:
+1. Conduct the trust interview for all secondary artifacts.
+2. Work the targeted documentation scope: review, update, and improve.
+3. Follow the implications across all artifact groups:
+   - If new or changed claims need verification, **write tests** that confirm them.
+   - If doc investigation reveals bugs in the code, **fix those bugs**.
+4. Session ends when the documentation improvement is complete and its implications
+   are resolved — not just noted.
+
+Deepen mode cascades changes across all three artifact groups as needed. Mode discipline
+does not apply in deepen mode — follow the truth wherever it leads.
 
 ## Core Principles
 
@@ -116,7 +138,7 @@ It must never hide problems to look clean.
   Format: "Docs say X. Code does Y. Tests assert Z."
 - **Unknowns are admitted**, not papered over.
 
-## Session Protocol (Standard Mode)
+## Session Protocol (Deepen Mode)
 
 ### 1. Trust Interview
 Follow the trust interview protocol exactly.
@@ -153,24 +175,36 @@ When deciding where new content belongs:
 - If it's a new subsystem or component → create a doc at the right level and link it
   from the parent level
 
-### 5. Session Summary
+### 5. Cascade to Tests and Code (Deepen Mode Only)
+After producing or updating documentation, assess the implications:
+
+- **Verify new claims:** If updated docs make specific behavioral claims, write tests
+  that confirm them. A doc that says "function X returns Y given Z" should have a test.
+- **Fix revealed bugs:** If code investigation for the doc work reveals bugs, fix them.
+  The doc work has already established the expected behavior — implement it.
+- Apply fixes in targeted, coherent changes. See [fix-playbook.md](../dttc/fix-playbook.md)
+  for code change conventions, and [test-patterns.md](../dttt/test-patterns.md) for tests.
+
+### 6. Session Summary
 Produce the structured summary.
 See [session-summary.md](../_dtt-shared/session-summary.md).
 
 ## Mode Discipline
 
-**Do not fix code or tests in this mode.** If you discover bugs or test gaps:
-
+**In Audit Mode:** Do not fix code or write tests. If you discover bugs or test gaps:
 - Note them in the documentation as known issues.
 - Include them in the session summary under Contradictions or Unknowns.
 - Suggest `/dttt` or `/dttc` follow-ups with specific scope.
 
-Documentation must reflect reality — or explicitly admit uncertainty.
+**In Deepen Mode:** Follow the implications wherever they lead. Writing tests to verify
+new doc claims and fixing code bugs revealed by the documentation work are both in scope.
+
+In both modes, documentation must reflect reality — or explicitly admit uncertainty.
 It must never hide problems to look clean.
 
 ## Output Conventions
 
-- In standard mode: prefer updating existing doc files over creating new ones.
+- In deepen mode: prefer updating existing doc files over creating new ones.
 - In audit mode: restructuring (creating new files, archiving old ones) is expected.
 - Use the repo's existing doc conventions (format, location, naming) when they exist.
 - If no conventions exist, establish a structure: README.md at root with links into a docs/ tree.
