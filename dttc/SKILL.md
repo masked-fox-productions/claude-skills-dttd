@@ -1,21 +1,75 @@
 ---
 name: dttc
-description: "Don't Trust the Code — fix or improve implementation by treating existing code as unreliable. Uses trusted docs and tests as the definition of correct behavior."
+description: "Don't Trust the Code — audit or deepen implementation by treating existing code as unreliable. Audit aggressively reviews and fixes code across a broad scope. Deepen starts from a targeted code change and cascades to tests and docs as needed."
 when_to_use: "When the user wants to fix bugs, refactor, implement features, or make code match what docs or tests say it should do. Also when code is known to be broken, inconsistent, or poorly structured."
-argument-hint: "[scope: module path, feature name, or 'full repo']"
+argument-hint: "[audit|deepen] [scope: module path, feature name, or 'full repo']"
 effort: high
 ---
 
 # /dttc — Don't Trust the Code
 
-You are entering a structured code repair session. Your job is to make the
-implementation match reality as defined by the trusted evidence — not to assume
-the code is correct and work around it.
+You are entering a structured code session. Your job is to make the implementation
+match reality as defined by the trusted evidence — not to assume the code is correct
+and work around it.
 
 **Primary artifact (untrusted):** Code
 **Secondary evidence:** Docs + Tests (trust levels set during interview)
 
-## Session Protocol
+## Session Modes
+
+At the start of the session, ask the user which mode they want:
+
+### Audit Mode
+Use when the current state of the code is unknown, suspected problematic, or has
+accumulated technical debt. Aggressively reviews and improves code across the targeted scope.
+
+When to use:
+- Onboarding to a codebase with unknown code quality
+- Code is known to be drifting from docs and tests but the full extent is unclear
+- Preparing for a major refactor and need to understand what's actually broken
+
+In audit mode:
+1. Set docs and tests trust to `unknown` (will be assessed during the audit).
+2. Set scope to full repo unless the user specifies otherwise.
+3. Survey the codebase structure: modules, public APIs, major code paths.
+4. Run the existing test suite. Note pass/fail counts and error patterns.
+5. Read code against whatever docs and tests exist, noting:
+   - Code that contradicts documentation
+   - Code paths with no test coverage
+   - Anti-patterns, dead code, or structural inconsistencies
+6. Produce an inventory: what's broken, what's inconsistent, what's untested.
+7. Prioritize fixes by:
+   - Failing tests (tests define done — fix code until they pass)
+   - Code contradicting high-trust documentation
+   - Structural issues blocking future work
+8. Apply fixes directly. For large scopes, complete the inventory first, then ask
+   which priority tier to tackle first.
+
+Audit mode **makes the fixes**, not just a plan. Changes stay within code only.
+Note doc inaccuracies and test gaps for follow-up rather than writing them in this session.
+
+### Deepen Mode
+Use when the user has a specific code improvement in mind and wants to follow its
+implications through to tests and documentation.
+
+When to use:
+- Fixing a known bug and wanting tests and docs to match
+- Implementing a feature and wanting the full artifact set to reflect it
+- Refactoring and wanting tests locked before and docs updated after
+
+In deepen mode:
+1. Conduct the trust interview for all secondary artifacts.
+2. Work the targeted code change: investigate, apply fixes, verify with tests.
+3. Follow the implications across all artifact groups:
+   - **Write or update tests** to cover the changed behavior — regression tests for
+     fixes, behavior tests for new features.
+   - **Update documentation** to reflect what the code now does.
+4. Session ends when the code change is complete, tests cover it, and docs reflect it.
+
+Deepen mode cascades changes across all three artifact groups as needed. Mode discipline
+does not apply in deepen mode — follow the truth wherever it leads.
+
+## Session Protocol (Deepen Mode)
 
 ### 1. Trust Interview
 Follow the trust interview protocol exactly.
@@ -73,15 +127,24 @@ Follow these principles:
 
 ### 5. Handle Discovered Issues Outside Scope
 
-**Do not update docs or write new tests in this mode** beyond what's needed to
-verify your fix. If you discover:
+**In Deepen Mode:** Follow the implications. Write or update tests to cover your fix.
+Update docs to reflect the changed behavior. Don't chase every rabbit hole — stay
+focused on the targeted change and its direct implications.
 
+**In Audit Mode:** Do not update docs or write new tests. If you discover:
 - **Doc inaccuracies:** Note them for a `/dttd` follow-up.
-- **Test gaps:** Note them for a `/dttt` follow-up. (Running existing tests to
-  validate your fix is fine — writing a whole new test suite is not.)
+- **Test gaps:** Note them for a `/dttt` follow-up.
 - **Bugs outside your scope:** Note them but don't chase them. Stay in scope.
 
-### 6. Session Summary
+### 6. Cascade to Tests and Docs (Deepen Mode Only)
+After applying fixes, close the loop on the other artifact groups:
+
+- **Write regression tests:** Every bug fix should have a test that would have
+  caught it. Every new feature should have tests that define its behavior.
+- **Update documentation:** If the fix changes documented behavior, update the docs.
+  If the feature was undocumented, document it.
+
+### 7. Session Summary
 Produce the structured summary.
 See [session-summary.md](../_dtt-shared/session-summary.md).
 
@@ -90,18 +153,24 @@ In addition to the standard summary, include:
 - **Fixes applied** (list with file paths, before/after description, evidence used).
 - **Tests run** (pass/fail counts before and after).
 - **Remaining failures** (if any tests still fail, explain why).
+- In deepen mode: **tests written** and **doc sections updated**.
 
 ## Mode Discipline
 
+**In Audit Mode:**
 - Do not rewrite documentation. Note inaccuracies for `/dttd`.
 - Do not build out the test suite. Note gaps for `/dttt`.
 - If you need a test to validate a fix, write the minimal test — don't use it
   as an excuse to start a coverage campaign.
-- Never assume the code is correct without evidence. That's the whole point.
+
+**In Deepen Mode:** Follow the implications wherever they lead. Writing tests that
+cover your fix and updating docs that describe the changed behavior are both in scope.
+
+In both modes, never assume the code is correct without evidence. That's the whole point.
 
 ## Suggested Follow-ups
 
-At the end of the session, suggest:
+At the end of an audit session, suggest:
 - `/dttt [scope]` — to add regression tests for the fixes.
 - `/dttd [scope]` — to update docs if behavior changed.
 

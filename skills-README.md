@@ -32,32 +32,53 @@ concern per session, clean interfaces between sessions.
 | `/dttt` | **Tests**           | Docs + Code       | Building coverage, auditing a test suite, locking behavior |
 | `/dttc` | **Code**            | Docs + Tests      | Fixing bugs, refactoring, TDD against trusted specs        |
 
+Each command runs in one of two modes. Pick the mode that matches your starting condition:
+
+| Mode       | Starting condition                              | Scope of changes                          |
+| ---------- | ----------------------------------------------- | ----------------------------------------- |
+| **audit**  | State of the targeted artifact is unknown       | Targeted group only (aggressive)          |
+| **deepen** | You know what you want to improve               | Cascades across all three groups as needed |
+
 ### /dttd — Don't Trust the Documents
 
 Produces documentation that honestly reflects reality. Reads code and tests to
 determine what the system actually does, then writes docs that say so — with
 every claim tagged as VERIFIED, INFERRED, CONTRADICTED, or UNKNOWN.
 
-Two modes: **standard** (focused work on a specific scope) and **audit**
-(full-repo reconnaissance that inventories all docs and proposes a structure).
-
 DTTD produces documentation with **audience awareness** (buyer, user,
 developer) and **hierarchical structure** (system, subsystem, component) so
 that docs serve everyone from first-time visitors to core contributors.
 
+**Audit:** The doc state is unknown. Surveys all documentation, assesses gaps,
+and makes aggressive improvements directly — reorganizing, rewriting, archiving as
+needed. Changes stay within documentation only.
+
+**Deepen:** You have a specific doc improvement in mind. Makes the targeted change,
+then follows its implications: writes tests to verify new claims, fixes code bugs
+revealed by the documentation work.
+
 ### /dttt — Don't Trust the Tests
 
-Builds or repairs a test suite by reading docs and code to discover what
-*should* be tested, then writes tests that verify it. If it finds bugs along
-the way, it writes failing tests that capture the bug — but does not fix the
-code. Bug fixes are a `/dttc` concern.
+Builds or repairs a test suite by reading docs and code to discover what *should*
+be tested, then writes tests that verify it.
+
+**Audit:** The test state is unknown or sparse. Surveys the codebase, measures
+coverage, and writes tests for the highest-priority gaps immediately. Changes stay
+within the test suite only.
+
+**Deepen:** You have a specific test improvement in mind. Writes the targeted tests,
+then follows the implications: fixes bugs that tests expose, corrects docs that tests
+contradict.
 
 ### /dttc — Don't Trust the Code
 
-Fixes implementation using documentation and tests as the definition of done.
-Test-driven: a failing test is the starting condition, a passing test is the
-exit condition. Does not update docs or add new tests beyond what the fix
-requires — those are `/dttd` and `/dttt` concerns.
+Makes implementation match reality as defined by trusted docs and tests.
+
+**Audit:** The code state is unknown. Surveys the codebase, runs tests, inventories
+discrepancies, and applies fixes aggressively. Changes stay within code only.
+
+**Deepen:** You have a specific code change in mind. Applies the fix, then follows
+its implications: writes regression tests, updates docs to reflect the changed behavior.
 
 ## How It Works
 
@@ -90,18 +111,37 @@ Every claim produced during a session gets tagged:
 
 ### Session Handoffs
 
-The real power comes from chaining modes:
+**Audit sessions** stay focused on one artifact group. Explicit handoffs pass the baton:
 
 ```
-/dttd → understand the system, produce honest docs
-/dttt → lock behavior in tests, using those docs as spec
-/dttc → fix implementation, using tests as definition of done
+/dttd audit → understand the system, produce honest docs
+/dttt audit → lock behavior in tests, using those docs as spec
+/dttc audit → fix implementation, using tests as definition of done
 ```
 
-If `/dttt` uncovers a code bug, it writes a failing test and logs the finding
-— it does not fix the code. At session end, it offers to queue a `/dttc`
-session with those failing tests as scope. One artifact per session. Handoffs
-are explicit.
+If `/dttt audit` uncovers a code bug, it writes a failing test and logs the finding
+— it does not fix the code. At session end, it suggests a `/dttc` session with those
+failing tests as scope. One artifact group per audit session. Handoffs are explicit.
+
+**Deepen sessions** follow implications rather than handing off. Starting from one
+targeted change, they cascade through all three artifact groups within the same session:
+
+```
+/dttd deepen → targeted doc improvement
+               → writes tests to verify new claims
+               → fixes code bugs the docs revealed
+
+/dttt deepen → targeted test improvement
+               → fixes bugs the tests expose
+               → corrects docs the tests contradict
+
+/dttc deepen → targeted code change
+               → writes regression tests
+               → updates docs to reflect the change
+```
+
+Use audit when you don't know the current state and need to sweep broadly.
+Use deepen when you know what you want to improve and want the full artifact set to stay consistent.
 
 Over time, trust levels drift upward. Docs that got a `/dttd` pass last week
 start the next session at `medium` instead of `low`. The methodology is how
