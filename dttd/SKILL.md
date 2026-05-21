@@ -33,7 +33,8 @@ In audit mode:
 2. Set scope to full repo unless the user specifies otherwise.
 3. Survey all existing documentation: README, docs/, inline comments, docstrings.
 4. Survey the codebase structure to understand what *should* be documented.
-5. Produce an inventory: what exists, what's missing, what's contradicted, what's stale.
+5. Produce an inventory using [doc-audit-checklist.md](doc-audit-checklist.md):
+   what exists, what's missing, what's contradicted, what's stale.
 6. Assess audience coverage: which audiences are served, which are neglected.
 7. Assess hierarchical completeness: is there system-level, subsystem-level, and
    component-level documentation? Where are the gaps?
@@ -155,7 +156,7 @@ Before writing anything, investigate the scope:
 Use the trust levels from the interview to weight what you find.
 See [trust-matrix.md](../_dtt-shared/trust-matrix.md) for how to act on each level.
 
-### 3. Audit Existing Documentation
+### 3. Review Existing Documentation
 Work through the [doc-audit-checklist.md](doc-audit-checklist.md). For each item:
 
 - Is it present?

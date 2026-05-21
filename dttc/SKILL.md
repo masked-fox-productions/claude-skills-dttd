@@ -125,18 +125,7 @@ Follow these principles:
   stop and think, not to update the test.
 - **Run tests after every fix.** Verify each change individually when possible.
 
-### 5. Handle Discovered Issues Outside Scope
-
-**In Deepen Mode:** Follow the implications. Write or update tests to cover your fix.
-Update docs to reflect the changed behavior. Don't chase every rabbit hole — stay
-focused on the targeted change and its direct implications.
-
-**In Audit Mode:** Do not update docs or write new tests. If you discover:
-- **Doc inaccuracies:** Note them for a `/dttd` follow-up.
-- **Test gaps:** Note them for a `/dttt` follow-up.
-- **Bugs outside your scope:** Note them but don't chase them. Stay in scope.
-
-### 6. Cascade to Tests and Docs (Deepen Mode Only)
+### 5. Cascade to Tests and Docs
 After applying fixes, close the loop on the other artifact groups:
 
 - **Write regression tests:** Every bug fix should have a test that would have
@@ -144,16 +133,20 @@ After applying fixes, close the loop on the other artifact groups:
 - **Update documentation:** If the fix changes documented behavior, update the docs.
   If the feature was undocumented, document it.
 
-### 7. Session Summary
+Don't chase every rabbit hole — stay focused on the targeted change and its direct
+implications.
+
+### 6. Session Summary
 Produce the structured summary.
 See [session-summary.md](../_dtt-shared/session-summary.md).
 
 In addition to the standard summary, include:
 
 - **Fixes applied** (list with file paths, before/after description, evidence used).
+- **Tests written** (regression tests and new behavior tests added).
+- **Doc sections updated** (if behavior changed or was previously undocumented).
 - **Tests run** (pass/fail counts before and after).
 - **Remaining failures** (if any tests still fail, explain why).
-- In deepen mode: **tests written** and **doc sections updated**.
 
 ## Mode Discipline
 
@@ -163,8 +156,9 @@ In addition to the standard summary, include:
 - If you need a test to validate a fix, write the minimal test — don't use it
   as an excuse to start a coverage campaign.
 
-**In Deepen Mode:** Follow the implications wherever they lead. Writing tests that
-cover your fix and updating docs that describe the changed behavior are both in scope.
+**In Deepen Mode:** Follow the implications wherever they lead. Writing tests that cover
+your fix and updating docs that describe the changed behavior are both in scope. Step 5
+covers this — it is not optional.
 
 In both modes, never assume the code is correct without evidence. That's the whole point.
 

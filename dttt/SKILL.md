@@ -115,17 +115,8 @@ Follow these principles:
 
 ### 5. Handling Discovered Bugs
 
-**In Audit Mode:** Do NOT fix code. When you find code that doesn't match trusted docs
-or expected behavior:
-1. Write a test that captures the **expected** behavior (it will fail).
-2. Mark it appropriately for the test framework (e.g., `xfail`, `skip`,
-   `@pytest.mark.xfail(reason="...")`, or a clear comment).
-3. Note the bug in the session log with what the code does, what it should do, and
-   the failing test that captures the gap.
-4. Continue building the test suite. Don't get pulled into fixing.
-
-**In Deepen Mode:** Fix the bug. The failing test you've written defines the expected
-behavior — implement the fix and make the test pass. Note it in the session summary.
+Fix the bug. The failing test you've written defines the expected behavior —
+implement the fix and make the test pass. Note it in the session summary.
 
 ### 6. Cascade to Docs and Code (Deepen Mode Only)
 After writing or updating tests, assess the implications:
